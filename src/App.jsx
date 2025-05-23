@@ -24,7 +24,7 @@ function App() {
 
     const winner = result1 === result2 && result2 === result3;
 
-    setTimeout(() => setIsSpinDisabled(false), 1500); //upate later to enabl eafter result3 = true
+    setTimeout(() => setIsSpinDisabled(false), 2175); //upate later to enabl eafter result3 = true
 
     if (winner) {
       setIsWinner(true);

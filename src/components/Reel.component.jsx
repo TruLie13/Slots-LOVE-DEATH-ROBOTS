@@ -16,11 +16,20 @@ const Reel = forwardRef(({ delay = 0 }, ref) => {
 
     const pool = symbols.filter((s) => s !== current && s !== finalSym);
     const mids = [];
-    while (mids.length < 3) {
+    while (mids.length < 6) {
       mids.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
     }
 
-    setRollSymbols([finalSym, mids[2], mids[1], mids[0], current]);
+    setRollSymbols([
+      finalSym,
+      mids[5],
+      mids[4],
+      mids[3],
+      mids[2],
+      mids[1],
+      mids[0],
+      current,
+    ]);
     setSpinning(true);
     return finalSym;
   };
@@ -59,7 +68,7 @@ const Reel = forwardRef(({ delay = 0 }, ref) => {
           key={rollSymbols.join("-")}
           initial={{ y: -100 * (rollSymbols.length - 1) }}
           animate={{ y: 0 }}
-          transition={{ delay, duration: 0.8, ease: "easeOut" }}
+          transition={{ delay, duration: 1.8, ease: "easeIn" }}
           onAnimationComplete={onComplete}
           style={{
             position: "absolute",
