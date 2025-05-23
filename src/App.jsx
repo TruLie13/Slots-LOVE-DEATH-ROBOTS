@@ -52,9 +52,9 @@ function App() {
       >
         <Stack spacing={2} alignItems="center" mt={5}>
           <Stack direction="row" spacing={2}>
-            <Reel ref={reel1Ref} />
-            <Reel ref={reel2Ref} />
-            <Reel ref={reel3Ref} />
+            <Reel ref={reel1Ref} delay={0} />
+            <Reel ref={reel2Ref} delay={0.2} />
+            <Reel ref={reel3Ref} delay={0.4} />
           </Stack>
           <Button
             variant="contained"
