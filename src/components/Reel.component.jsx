@@ -1,9 +1,10 @@
+// src/components/Reel.jsx
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Card, Typography } from "@mui/material";
+import { Card } from "@mui/material";
 import { motion as Motion } from "framer-motion";
+import { symbols } from "../assets/symbols";
 
 const Reel = forwardRef(({ delay = 0 }, ref) => {
-  const symbols = ["💀", "🤖", "❤", "✖", "📸", "💉", "⚙", "🏖️", "🔲"];
   const [current, setCurrent] = useState(symbols[0]);
   const [rollSymbols, setRollSymbols] = useState([symbols[0]]);
   const [spinning, setSpinning] = useState(false);
@@ -11,18 +12,14 @@ const Reel = forwardRef(({ delay = 0 }, ref) => {
   const spin = () => {
     if (spinning) return current;
     const finalSym = symbols[Math.floor(Math.random() * symbols.length)];
-    // if it's the same as current, do nothing
     if (finalSym === current) return current;
 
-    // pick 3 uniques not equal to current or final
     const pool = symbols.filter((s) => s !== current && s !== finalSym);
     const mids = [];
     while (mids.length < 3) {
-      const pick = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
-      mids.push(pick);
+      mids.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
     }
 
-    // stack: [final, mid3, mid2, mid1, previous=current]
     setRollSymbols([finalSym, mids[2], mids[1], mids[0], current]);
     setSpinning(true);
     return finalSym;
@@ -54,6 +51,7 @@ const Reel = forwardRef(({ delay = 0 }, ref) => {
         height: 100,
         overflow: "hidden",
         position: "relative",
+        backgroundColor: "transparent",
       }}
     >
       {spinning ? (
@@ -61,7 +59,7 @@ const Reel = forwardRef(({ delay = 0 }, ref) => {
           key={rollSymbols.join("-")}
           initial={{ y: -100 * (rollSymbols.length - 1) }}
           animate={{ y: 0 }}
-          transition={{ duration: 0.8, ease: "easeIn", delay: delay }}
+          transition={{ delay, duration: 0.8, ease: "easeOut" }}
           onAnimationComplete={onComplete}
           style={{
             position: "absolute",
@@ -72,13 +70,29 @@ const Reel = forwardRef(({ delay = 0 }, ref) => {
         >
           {rollSymbols.map((sym, i) => (
             <div key={i} style={cellStyle}>
-              <Typography variant="h3">{sym}</Typography>
+              <img
+                src={sym}
+                width={95}
+                height={95}
+                alt=""
+                style={{
+                  filter: "brightness(0) saturate(100%) invert(1)",
+                }}
+              />
             </div>
           ))}
         </Motion.div>
       ) : (
         <div style={cellStyle}>
-          <Typography variant="h3">{current}</Typography>
+          <img
+            src={current}
+            style={{
+              filter: "brightness(0) saturate(100%) invert(1)",
+            }}
+            width={95}
+            height={95}
+            alt=""
+          />
         </div>
       )}
     </Card>

@@ -20,9 +20,11 @@ function App() {
     const result2 = reel2Ref.current.spin();
     const result3 = reel3Ref.current.spin();
 
+    console.log(result1, result2, result3);
+
     const winner = result1 === result2 && result2 === result3;
 
-    setTimeout(() => setIsSpinDisabled(false), 1500); //upate later to enableafter result3 = true
+    setTimeout(() => setIsSpinDisabled(false), 1500); //upate later to enabl eafter result3 = true
 
     if (winner) {
       setIsWinner(true);
@@ -48,6 +50,7 @@ function App() {
         sx={{
           backgroundColor: "transparent",
           minHeight: "5rem",
+          padding: "1rem",
         }}
       >
         <Stack spacing={2} alignItems="center" mt={5}>
@@ -56,6 +59,7 @@ function App() {
             <Reel ref={reel2Ref} delay={0.2} />
             <Reel ref={reel3Ref} delay={0.4} />
           </Stack>
+          <Result spinCount={spinCount} isWinner={isWinner} />
           <Button
             variant="contained"
             onClick={handleSpin}
@@ -64,7 +68,6 @@ function App() {
             Spin
           </Button>
         </Stack>
-        <Result spinCount={spinCount} isWinner={isWinner} />
       </Card>
     </Box>
   );
