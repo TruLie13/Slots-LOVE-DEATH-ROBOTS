@@ -14,6 +14,7 @@ function App() {
 
   const handleSpin = () => {
     setSpinCount((prev) => prev + 1);
+    setIsSpinDisabled(true);
 
     const result1 = reel1Ref.current.spin();
     const result2 = reel2Ref.current.spin();
@@ -21,13 +22,12 @@ function App() {
 
     const winner = result1 === result2 && result2 === result3;
 
+    setTimeout(() => setIsSpinDisabled(false), 1500); //upate later to enableafter result3 = true
+
     if (winner) {
       setIsWinner(true);
-      setIsSpinDisabled(true);
-      setTimeout(() => setIsSpinDisabled(false), 1500);
     } else {
       setIsWinner(false);
-      setIsSpinDisabled(false);
     }
 
     console.log("Spin result:", [result1, result2, result3]);
