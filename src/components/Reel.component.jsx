@@ -1,87 +1,78 @@
-import { Box, Card } from "@mui/material";
-import { forwardRef, useImperativeHandle, useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import { Card, Typography } from "@mui/material";
+import { motion as Motion } from "framer-motion";
 
 const Reel = forwardRef((props, ref) => {
   const symbols = ["💀", "🤖", "❤", "✖", "📸", "💉", "⚙", "🏖️", "🔲"];
-  const [reelSymbols, setReelSymbols] = useState([symbols[0]]);
-  const [translateY, setTranslateY] = useState(0);
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  const symbolHeight = 100; // px — matches Card height
-  const visibleIndex = 2; // final symbol lands here (centered in 5)
+  const [current, setCurrent] = useState(symbols[0]);
+  const [previous, setPrevious] = useState(symbols[0]);
+  const [next, setNext] = useState(symbols[0]);
+  const [spinning, setSpinning] = useState(false);
 
   const spin = () => {
-    return new Promise((resolve) => {
-      const finalSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-      const sequence = [];
-
-      // Build 4 random + 1 final = 5 symbols
-      for (let i = 0; i < 4; i++) {
-        sequence.push(symbols[Math.floor(Math.random() * symbols.length)]);
-      }
-      sequence.push(finalSymbol);
-
-      setReelSymbols(sequence);
-      setTranslateY(0); // reset
-      setIsSpinning(true);
-
-      // Animate scroll top-down to center the final symbol
-      setTimeout(() => {
-        const offset = symbolHeight * visibleIndex;
-        setTranslateY(offset);
-      }, 50);
-
-      // End spin
-      setTimeout(() => {
-        setIsSpinning(false);
-        setReelSymbols([finalSymbol]); // show only final symbol
-        setTranslateY(0);
-        resolve(finalSymbol);
-      }, 700); // match this to transition
-    });
+    if (spinning) return current;
+    const rnd = symbols[Math.floor(Math.random() * symbols.length)];
+    setPrevious(current);
+    setNext(rnd);
+    setSpinning(true);
+    return rnd;
   };
 
   useImperativeHandle(ref, () => ({
     spin,
-    getValue: () => reelSymbols[reelSymbols.length - 1],
+    getValue: () => current,
   }));
+
+  const onComplete = () => {
+    setCurrent(next);
+    setSpinning(false);
+  };
+
+  const cellStyle = {
+    width: "100%",
+    height: 100,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
 
   return (
     <Card
       sx={{
         width: 100,
-        height: symbolHeight,
+        height: 100,
         overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        // backgroundColor: "transparent",
+        position: "relative",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          transform: `translateY(${translateY}px)`,
-          transition: isSpinning ? "transform 1.2s ease-out" : "none",
-        }}
-      >
-        {reelSymbols.map((symbol, i) => (
-          <Box
-            key={i}
-            sx={{
-              height: symbolHeight,
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "2.5rem",
-            }}
-          >
-            {symbol}
-          </Box>
-        ))}
-      </Box>
+      {spinning ? (
+        <Motion.div
+          key={`${previous}-${next}`}
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          onAnimationComplete={onComplete}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+          }}
+        >
+          {/* new symbol comes down into center */}
+          <div style={cellStyle}>
+            <Typography variant="h3">{next}</Typography>
+          </div>
+          {/* old symbol scrolls down out of view */}
+          <div style={cellStyle}>
+            <Typography variant="h3">{previous}</Typography>
+          </div>
+        </Motion.div>
+      ) : (
+        <div style={cellStyle}>
+          <Typography variant="h3">{current}</Typography>
+        </div>
+      )}
     </Card>
   );
 });
