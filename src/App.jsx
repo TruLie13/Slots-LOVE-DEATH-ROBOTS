@@ -43,7 +43,7 @@ function App() {
         display: "flex",
         justifyContent: "center", // horizontal
         alignItems: "center", // vertical
-        backgroundColor: "dark grey",
+        backgroundColor: "#121111",
       }}
     >
       <Card
@@ -55,9 +55,9 @@ function App() {
       >
         <Stack spacing={2} alignItems="center" mt={5}>
           <Stack direction="row" spacing={2}>
-            <Reel ref={reel1Ref} delay={0} />
-            <Reel ref={reel2Ref} delay={0.2} />
-            <Reel ref={reel3Ref} delay={0.4} />
+            <Reel key={0} ref={reel1Ref} delay={0} starterIndex={0} />
+            <Reel key={1} ref={reel2Ref} delay={0.2} starterIndex={1} />
+            <Reel key={2} ref={reel3Ref} delay={0.4} starterIndex={2} />
           </Stack>
           <Result spinCount={spinCount} isWinner={isWinner} />
           <Button

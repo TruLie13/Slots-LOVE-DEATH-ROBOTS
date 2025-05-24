@@ -1,13 +1,23 @@
 // src/components/Reel.jsx
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { Card } from "@mui/material";
 import { motion as Motion } from "framer-motion";
 import { symbols } from "../assets/symbols";
 
-const Reel = forwardRef(({ delay = 0 }, ref) => {
-  const [current, setCurrent] = useState(symbols[0]);
-  const [rollSymbols, setRollSymbols] = useState([symbols[0]]);
+const Reel = forwardRef(({ delay = 0, starterIndex }, ref) => {
+  const [current, setCurrent] = useState(symbols[starterIndex]);
+  const [rollSymbols, setRollSymbols] = useState([symbols[starterIndex]]);
   const [spinning, setSpinning] = useState(false);
+
+  useEffect(() => {
+    setCurrent(symbols[starterIndex]);
+    setRollSymbols([symbols[starterIndex]]);
+  }, [starterIndex]);
 
   const spin = () => {
     if (spinning) return current;
