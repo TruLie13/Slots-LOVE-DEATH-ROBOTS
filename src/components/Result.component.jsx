@@ -1,76 +1,58 @@
 // src/components/Result.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { Card, Typography, Fade } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 
-const RESULT_DELAY_MS = 2100; // match your reels’ stop time
-const FADE_DURATION_MS = 500;
+const lossPrompts = [
+  "you're so close",
+  "oof...",
+  "try again...",
+  "keep going",
+  "don't give up",
+  "something encouraging because you lost and I don't want you to feel bad",
+];
 
-const Result = ({ spinCount, isWinner }) => {
-  const lossPrompts = [
-    "you're so close",
-    "oof...",
-    "try again...",
-    "keep going",
-    "don't give up",
-    "something encouraging because you lost and I don't want you to feel bad",
-  ];
-
+export default function Result({ stoppedCount, isWinner }) {
   const lastPromptRef = useRef("");
   const [message, setMessage] = useState("");
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
-    if (spinCount > 0) {
-      // clear immediately
+    if (stoppedCount !== 3) {
       setShowMessage(false);
       setMessage("");
-
-      const timer = setTimeout(() => {
-        let nextMsg;
-        if (isWinner) {
-          nextMsg = "We Have a Winn-na";
-        } else {
-          // filter out the last prompt so it can't repeat
-          const choices = lossPrompts.filter(
-            (p) => p !== lastPromptRef.current
-          );
-          nextMsg = choices[Math.floor(Math.random() * choices.length)];
-          lastPromptRef.current = nextMsg;
-        }
-        setMessage(nextMsg);
-        setShowMessage(true);
-      }, RESULT_DELAY_MS);
-
-      return () => clearTimeout(timer);
+    } else if (stoppedCount === 3) {
+      // all reels stopped: pick and show
+      let nextMsg;
+      if (isWinner) {
+        nextMsg = "We Have a Winn-na";
+      } else {
+        const choices = lossPrompts.filter((p) => p !== lastPromptRef.current);
+        nextMsg = choices[Math.floor(Math.random() * choices.length)];
+        lastPromptRef.current = nextMsg;
+      }
+      setMessage(nextMsg);
+      setShowMessage(true);
     }
-  }, [spinCount, isWinner]);
+  }, [stoppedCount, isWinner]);
 
   return (
     <Card
+      elevation={0}
       sx={{
         minHeight: "8.5rem",
         minWidth: "90%",
-        margin: "1rem",
+        m: 2,
         textAlign: "center",
         boxShadow: "none",
         border: "none",
         backgroundColor: "transparent",
       }}
     >
-      {spinCount > 0 && (
-        <Fade
-          in={showMessage}
-          timeout={FADE_DURATION_MS}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Typography sx={{ color: "grey", fontSize: "1.5rem" }}>
-            {message}
-          </Typography>
-        </Fade>
+      {showMessage && (
+        <Typography sx={{ color: "grey", fontSize: "1.5rem" }}>
+          {message}
+        </Typography>
       )}
     </Card>
   );
-};
-
-export default Result;
+}

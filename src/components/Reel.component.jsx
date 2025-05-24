@@ -1,4 +1,3 @@
-// src/components/Reel.jsx
 import React, {
   useState,
   useEffect,
@@ -9,7 +8,7 @@ import { Card } from "@mui/material";
 import { motion as Motion } from "framer-motion";
 import { symbols } from "../assets/symbols";
 
-const Reel = forwardRef(({ delay = 0, starterIndex }, ref) => {
+const Reel = forwardRef(({ delay = 0, starterIndex, onStop }, ref) => {
   const [current, setCurrent] = useState(symbols[starterIndex]);
   const [rollSymbols, setRollSymbols] = useState([symbols[starterIndex]]);
   const [spinning, setSpinning] = useState(false);
@@ -22,7 +21,11 @@ const Reel = forwardRef(({ delay = 0, starterIndex }, ref) => {
   const spin = () => {
     if (spinning) return current;
     const finalSym = symbols[Math.floor(Math.random() * symbols.length)];
-    if (finalSym === current) return current;
+    if (finalSym === current) {
+      // no spin animation → immediately notify parent we “stopped”
+      onStop?.();
+      return current;
+    }
 
     const pool = symbols.filter((s) => s !== current && s !== finalSym);
     const mids = [];
@@ -53,6 +56,7 @@ const Reel = forwardRef(({ delay = 0, starterIndex }, ref) => {
     setCurrent(rollSymbols[0]);
     setSpinning(false);
     setRollSymbols([rollSymbols[0]]);
+    onStop?.();
   };
 
   const cellStyle = {
@@ -105,12 +109,12 @@ const Reel = forwardRef(({ delay = 0, starterIndex }, ref) => {
         <div style={cellStyle}>
           <img
             src={current}
-            style={{
-              filter: "brightness(0) saturate(100%) invert(1)",
-            }}
             width={95}
             height={95}
             alt=""
+            style={{
+              filter: "brightness(0) saturate(100%) invert(1)",
+            }}
           />
         </div>
       )}
