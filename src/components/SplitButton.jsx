@@ -10,22 +10,25 @@ const SplitButton = ({ disabled, onClick, children }) => {
   const HALF = WIDTH / 2;
   const SHIFT = HALF - CIRCLE / 2;
 
-  // common spring transition
+  // spring for the shape morph only
   const spring = { type: "spring", stiffness: 400, damping: 30 };
-
   const buttonColor = disabled ? "#000000" : "#ffffff";
 
-  // base style for each half
+  // static anaglyph when enabled
+  const anaglyphShadow = !disabled
+    ? "2px 0 8px #FF0000, -2px 0 8px #00FFFF"
+    : "none";
+
+  // shared style for each half
   const halfStyle = {
     position: "absolute",
     top: 0,
     width: HALF,
     height: HEIGHT,
-    background: "#000000",
+    background: buttonColor,
     borderRadius: HEIGHT / 2,
   };
 
-  // define left/right halves in a small array
   const halves = [
     { left: 0, offset: -SHIFT },
     { left: HALF, offset: SHIFT },
@@ -42,7 +45,6 @@ const SplitButton = ({ disabled, onClick, children }) => {
         p: 0,
       }}
     >
-      {/* split halves */}
       {halves.map(({ left, offset }, i) => (
         <Motion.div
           key={i}
@@ -52,7 +54,7 @@ const SplitButton = ({ disabled, onClick, children }) => {
           style={{ ...halfStyle, left }}
         />
       ))}
-      {/* whole and center circle */}
+
       <Motion.div
         initial={false}
         animate={{
@@ -68,10 +70,11 @@ const SplitButton = ({ disabled, onClick, children }) => {
           top: "50%",
           left: "50%",
           background: buttonColor,
+          boxShadow: anaglyphShadow,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#fff",
+          color: disabled ? "#ffffff" : "#000000",
           fontWeight: "bold",
           pointerEvents: "none",
           userSelect: "none",
