@@ -12,14 +12,13 @@ const SplitButton = ({ disabled, onClick, children }) => {
 
   // spring for the shape morph only
   const spring = { type: "spring", stiffness: 400, damping: 30 };
+  // keeping your ternary as-is
   const buttonColor = disabled ? "#ffffff" : "#ffffff";
 
-  // enabled: subtle combined anaglyph on the center piece
-  const anaglyphShadow = !disabled
-    ? "2px 0 8px #FF0000, -2px 0 8px #00FFFF"
-    : "none";
+  // static anaglyph when enabled
+  const anaglyphShadow = "2px 0 8px #FF0000, -2px 0 8px #00FFFF";
 
-  // disabled: use drop-shadow filter for a more natural shadow look
+  // disabled: drop-shadow filters for halves
   const leftFilter = disabled
     ? "drop-shadow(-3px 0 3px rgba(0,255,255,0.6))"
     : "none";
@@ -42,6 +41,13 @@ const SplitButton = ({ disabled, onClick, children }) => {
     { left: HALF, offset: SHIFT, filter: rightFilter },
   ];
 
+  // subtle “breathing” keyframes for enabled anaglyph
+  const shadowFrames = [
+    anaglyphShadow,
+    "4px 0 10px #FF0000, -4px 0 10px #00FFFF",
+    anaglyphShadow,
+  ];
+
   return (
     <ButtonBase
       disabled={disabled}
@@ -53,22 +59,18 @@ const SplitButton = ({ disabled, onClick, children }) => {
         p: 0,
       }}
     >
-      {/* left & right halves with drop-shadow when disabled */}
+      {/* left & right halves (with drop-shadow when disabled) */}
       {halves.map(({ left, offset, filter }, i) => (
         <Motion.div
           key={i}
           initial={false}
           animate={{ x: disabled ? offset : 0 }}
           transition={spring}
-          style={{
-            ...halfStyle,
-            left,
-            filter, // use filter instead of boxShadow
-          }}
+          style={{ ...halfStyle, left, filter }}
         />
       ))}
 
-      {/* center/full button retains enabled anaglyph effect */}
+      {/* center/full button */}
       <Motion.div
         initial={false}
         animate={{
@@ -77,14 +79,24 @@ const SplitButton = ({ disabled, onClick, children }) => {
           borderRadius: disabled ? CIRCLE / 2 : HEIGHT / 2,
           x: "-50%",
           y: "-50%",
+          boxShadow: disabled ? "none" : shadowFrames,
         }}
-        transition={spring}
+        transition={{
+          ...spring,
+          boxShadow: disabled
+            ? {}
+            : {
+                duration: 4,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "reverse",
+              },
+        }}
         style={{
           position: "absolute",
           top: "50%",
           left: "50%",
           background: buttonColor,
-          boxShadow: anaglyphShadow,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
