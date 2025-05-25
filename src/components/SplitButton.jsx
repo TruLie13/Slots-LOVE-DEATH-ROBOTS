@@ -17,21 +17,21 @@ const SplitButton = ({ disabled, onClick, children }) => {
   // static anaglyph shadow when enabled
   const anaglyphShadow = disabled
     ? "none"
-    : "2.5px 0 8.5px #FF0000, -2px 0 8.5px #00FFFF";
+    : "2.5px 0 4px #FF0000, -2px 0 4px #00FFFF";
 
   // breathing keyframes: full glow → subtle → full
   const shadowFrames = [
     anaglyphShadow,
-    "1px 0 6px #FF0000, -1px 0 6px #00FFFF",
+    "4px 0 9px #FF0000, -4px 0 9px #00FFFF",
     anaglyphShadow,
   ];
 
   // drop-shadows for halves when disabled
   const leftFilter = disabled
-    ? "drop-shadow(-3px 0 3px rgba(0,255,255,0.6))"
+    ? "drop-shadow(-4px 0 3px rgba(0,255,255,0.6))"
     : "none";
   const rightFilter = disabled
-    ? "drop-shadow(3px 0 3px rgba(255,0,0,0.6))"
+    ? "drop-shadow(4px 0 3px rgba(255,0,0,0.6))"
     : "none";
 
   // shared style for each half
@@ -104,7 +104,7 @@ const SplitButton = ({ disabled, onClick, children }) => {
           boxShadow: disabled
             ? {}
             : {
-                duration: 4,
+                duration: 3.5,
                 ease: "easeInOut",
                 repeat: Infinity,
                 repeatType: "reverse",
