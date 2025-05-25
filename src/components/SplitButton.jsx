@@ -4,7 +4,7 @@ import { motion as Motion } from "framer-motion";
 import { ButtonBase } from "@mui/material";
 
 const SplitButton = ({ disabled, onClick, children }) => {
-  const WIDTH = 200;
+  const WIDTH = 175;
   const HEIGHT = 40;
   const CIRCLE = 40;
   const HALF = WIDTH / 2;
@@ -12,11 +12,19 @@ const SplitButton = ({ disabled, onClick, children }) => {
 
   // spring for the shape morph only
   const spring = { type: "spring", stiffness: 400, damping: 30 };
-  const buttonColor = disabled ? "#000000" : "#ffffff";
+  const buttonColor = disabled ? "#ffffff" : "#ffffff";
 
-  // static anaglyph when enabled
+  // enabled: subtle combined anaglyph on the center piece
   const anaglyphShadow = !disabled
     ? "2px 0 8px #FF0000, -2px 0 8px #00FFFF"
+    : "none";
+
+  // disabled: use drop-shadow filter for a more natural shadow look
+  const leftFilter = disabled
+    ? "drop-shadow(-3px 0 3px rgba(0,255,255,0.6))"
+    : "none";
+  const rightFilter = disabled
+    ? "drop-shadow(3px 0 3px rgba(255,0,0,0.6))"
     : "none";
 
   // shared style for each half
@@ -30,8 +38,8 @@ const SplitButton = ({ disabled, onClick, children }) => {
   };
 
   const halves = [
-    { left: 0, offset: -SHIFT },
-    { left: HALF, offset: SHIFT },
+    { left: 0, offset: -SHIFT, filter: leftFilter },
+    { left: HALF, offset: SHIFT, filter: rightFilter },
   ];
 
   return (
@@ -45,16 +53,22 @@ const SplitButton = ({ disabled, onClick, children }) => {
         p: 0,
       }}
     >
-      {halves.map(({ left, offset }, i) => (
+      {/* left & right halves with drop-shadow when disabled */}
+      {halves.map(({ left, offset, filter }, i) => (
         <Motion.div
           key={i}
           initial={false}
           animate={{ x: disabled ? offset : 0 }}
           transition={spring}
-          style={{ ...halfStyle, left }}
+          style={{
+            ...halfStyle,
+            left,
+            filter, // use filter instead of boxShadow
+          }}
         />
       ))}
 
+      {/* center/full button retains enabled anaglyph effect */}
       <Motion.div
         initial={false}
         animate={{
@@ -74,7 +88,6 @@ const SplitButton = ({ disabled, onClick, children }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: disabled ? "#ffffff" : "#000000",
           fontWeight: "bold",
           pointerEvents: "none",
           userSelect: "none",
