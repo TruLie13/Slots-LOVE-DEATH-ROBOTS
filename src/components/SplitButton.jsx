@@ -42,11 +42,18 @@ const SplitButton = ({ disabled, onClick, children }) => {
     <ButtonBase
       disabled={disabled}
       onClick={onClick}
+      disableRipple
+      disableTouchRipple
+      disableFocusRipple
       sx={{
         position: "relative",
         width: WIDTH,
         height: HEIGHT,
         p: 0,
+        outline: "none",
+        "&:focus": { outline: "none" },
+        "&:focus-visible": { outline: "none" },
+        WebkitTapHighlightColor: "transparent", // iOS tap highlight
       }}
     >
       {/* left & right halves with per-half boxShadow when disabled */}
