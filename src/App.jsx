@@ -7,17 +7,17 @@ import SplitButton from "./components/SplitButton.jsx";
 function App() {
   const [isWinner, setIsWinner] = useState(false);
   const [spinCount, setSpinCount] = useState(0);
-  const [isSpinDisabled, setIsSpinDisabled] = useState(true);
+  const [isSpinDisabled, setIsSpinDisabled] = useState(false);
   const [stoppedCount, setStoppedCount] = useState(0);
 
   const reel1Ref = useRef();
   const reel2Ref = useRef();
   const reel3Ref = useRef();
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsSpinDisabled(false), 450);
-    return () => clearTimeout(timer);
-  }, []);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => setIsSpinDisabled(false), 450);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   const handleSpin = () => {
     setSpinCount((prev) => prev + 1);

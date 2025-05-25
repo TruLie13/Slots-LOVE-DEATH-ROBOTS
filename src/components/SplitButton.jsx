@@ -12,16 +12,27 @@ const SplitButton = ({ disabled, onClick, children }) => {
 
   // spring for the shape morph only
   const spring = { type: "spring", stiffness: 400, damping: 30 };
-  const buttonColor = "#ffffff"; // per your last tweak
+  const buttonColor = "#ffffff"; // unchanged
 
-  // enabled: subtle combined anaglyph on the center piece
+  // static anaglyph shadow when enabled
   const anaglyphShadow = disabled
     ? "none"
-    : "2px 0 8px #FF0000, -2px 0 8px #00FFFF";
+    : "2.5px 0 8.5px #FF0000, -2px 0 8.5px #00FFFF";
 
-  // disabled: subtle box-shadow on each half (pill shape ensures rounded glow)
-  const leftShadow = disabled ? "-3px 0 3px rgba(0,255,255,0.6)" : "none";
-  const rightShadow = disabled ? "3px 0 3px rgba(255,0,0,0.6)" : "none";
+  // drop-shadow filters for halves when disabled
+  const leftFilter = disabled
+    ? "drop-shadow(-3px 0 3px rgba(0,255,255,0.6))"
+    : "none";
+  const rightFilter = disabled
+    ? "drop-shadow(3px 0 3px rgba(255,0,0,0.6))"
+    : "none";
+
+  // “breathing” keyframes matching your last tweak
+  const shadowFrames = [
+    anaglyphShadow,
+    "4px 0 10px #FF0000, -4px 0 10px #00FFFF",
+    anaglyphShadow,
+  ];
 
   // shared style for each half
   const halfStyle = {
@@ -34,8 +45,8 @@ const SplitButton = ({ disabled, onClick, children }) => {
   };
 
   const halves = [
-    { left: 0, offset: -SHIFT, boxShadow: leftShadow },
-    { left: HALF, offset: SHIFT, boxShadow: rightShadow },
+    { left: 0, offset: -SHIFT, filter: leftFilter },
+    { left: HALF, offset: SHIFT, filter: rightFilter },
   ];
 
   return (
@@ -53,11 +64,11 @@ const SplitButton = ({ disabled, onClick, children }) => {
         outline: "none",
         "&:focus": { outline: "none" },
         "&:focus-visible": { outline: "none" },
-        WebkitTapHighlightColor: "transparent", // iOS tap highlight
+        WebkitwTapHighlightColor: "transparent",
       }}
     >
-      {/* left & right halves with per-half boxShadow when disabled */}
-      {halves.map(({ left, offset, boxShadow }, i) => (
+      {/* left & right halves (unchanged) */}
+      {halves.map(({ left, offset, filter }, i) => (
         <Motion.div
           key={i}
           initial={false}
@@ -66,28 +77,38 @@ const SplitButton = ({ disabled, onClick, children }) => {
           style={{
             ...halfStyle,
             left,
-            boxShadow,
+            filter,
           }}
         />
       ))}
 
-      {/* center/full button retains enabled anaglyph */}
+      {/* center/full button with animated anaglyph */}
       <Motion.div
-        initial={false}
+        initial={true}
         animate={{
           width: disabled ? CIRCLE : WIDTH,
           height: disabled ? CIRCLE : HEIGHT,
           borderRadius: disabled ? CIRCLE / 2 : HEIGHT / 2,
           x: "-50%",
           y: "-50%",
+          boxShadow: disabled ? "none" : shadowFrames,
         }}
-        transition={spring}
+        transition={{
+          ...spring,
+          boxShadow: disabled
+            ? {}
+            : {
+                duration: 3,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "reverse",
+              },
+        }}
         style={{
           position: "absolute",
           top: "50%",
           left: "50%",
           background: buttonColor,
-          boxShadow: anaglyphShadow,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
