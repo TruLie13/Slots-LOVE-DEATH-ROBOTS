@@ -22,7 +22,7 @@ const Reel = forwardRef(({ delay = 0, starterIndex, onStop }, ref) => {
     if (spinning) return current;
     const finalSym = symbols[Math.floor(Math.random() * symbols.length)];
     if (finalSym === current) {
-      // no spin animation → immediately notify parent we “stopped”
+      // no spin animation → immediately notify parent when “stopped”
       onStop?.();
       return current;
     }

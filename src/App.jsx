@@ -1,17 +1,23 @@
-import { Button, Card, Stack, Box } from "@mui/material";
+import { Button, Card, Stack, Box, Typography } from "@mui/material";
 import { useRef, useState, useEffect } from "react";
 import Reel from "./components/Reel.component.jsx";
 import Result from "./components/Result.component.jsx";
+import SplitButton from "./components/SplitButton.jsx";
 
 function App() {
   const [isWinner, setIsWinner] = useState(false);
   const [spinCount, setSpinCount] = useState(0);
-  const [isSpinDisabled, setIsSpinDisabled] = useState(false);
+  const [isSpinDisabled, setIsSpinDisabled] = useState(true);
   const [stoppedCount, setStoppedCount] = useState(0);
 
   const reel1Ref = useRef();
   const reel2Ref = useRef();
   const reel3Ref = useRef();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsSpinDisabled(false), 450);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSpin = () => {
     setSpinCount((prev) => prev + 1);
@@ -47,6 +53,8 @@ function App() {
           backgroundColor: "transparent",
           minHeight: "5rem",
           padding: "1rem",
+          boxShadow: "none",
+          border: "none",
         }}
       >
         <Stack spacing={2} alignItems="center" mt={5}>
@@ -61,14 +69,14 @@ function App() {
             <Reel
               key={1}
               ref={reel2Ref}
-              delay={0.3}
+              delay={0.2}
               starterIndex={1}
               onStop={() => setStoppedCount((c) => c + 1)}
             />
             <Reel
               key={2}
               ref={reel3Ref}
-              delay={0.6}
+              delay={0.4}
               starterIndex={2}
               onStop={() => setStoppedCount((c) => c + 1)}
             />
@@ -78,13 +86,13 @@ function App() {
             stoppedCount={stoppedCount}
             isWinner={isWinner}
           />
-          <Button
-            variant="contained"
-            onClick={handleSpin}
-            disabled={isSpinDisabled}
-          >
-            Spin
-          </Button>
+          <SplitButton onClick={handleSpin} disabled={isSpinDisabled}>
+            <Typography
+              sx={{ color: "black", fontSize: "1rem", fontWeight: "bold" }}
+            >
+              {isSpinDisabled ? "" : "SPIN"}
+            </Typography>
+          </SplitButton>
         </Stack>
       </Card>
     </Box>
