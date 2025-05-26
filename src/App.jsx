@@ -1,11 +1,13 @@
-import { Button, Card, Stack, Box, Typography } from "@mui/material";
+import { Card, Stack, Box, Typography } from "@mui/material";
 import { useRef, useState, useEffect } from "react";
 import Reel from "./components/Reel.component.jsx";
 import Result from "./components/Result.component.jsx";
 import SplitButton from "./components/SplitButton.jsx";
-import spinSoundFile from "./assets/sounds/reel_spin_sound.mp3";
-import buttonSoundFile from "./assets/sounds/button_sound.mp3";
-import buttonEnabledSoundFile from "./assets/sounds/button_enabled_sound.mp3";
+import {
+  enabledButtonAudio,
+  disabledButtonAudio,
+  spinAudio,
+} from "./assets/sounds/index.js";
 
 function App() {
   const [isWinner, setIsWinner] = useState(false);
@@ -17,19 +19,8 @@ function App() {
   const reel2Ref = useRef();
   const reel3Ref = useRef();
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setIsSpinDisabled(false), 750);
-  //   return () => clearTimeout(timer);
-  // }, []);
-
-  const disabledButtonAudio = useRef(new Audio(buttonSoundFile));
-  const enabledButtonAudio = useRef(new Audio(buttonEnabledSoundFile));
-  const spinAudio = useRef(new Audio(spinSoundFile));
-
   const handleSpin = () => {
-    disabledButtonAudio.current.volume = 0.7;
-    disabledButtonAudio.current.currentTime = 0.4;
-    disabledButtonAudio.current
+    disabledButtonAudio
       .play()
       .catch((err) => console.warn("Disabled Button Audio play failed:", err));
 
@@ -38,12 +29,10 @@ function App() {
     setStoppedCount(0);
 
     setTimeout(() => {
-      spinAudio.current.volume = 1;
-      spinAudio.current.currentTime = 0.4;
-      spinAudio.current
+      spinAudio
         .play()
         .catch((err) => console.warn("Spin Audio play failed:", err));
-    }, 1000);
+    }, 0);
 
     const result1 = reel1Ref.current.spin();
     const result2 = reel2Ref.current.spin();
@@ -54,9 +43,7 @@ function App() {
 
   useEffect(() => {
     if (stoppedCount === 3) {
-      enabledButtonAudio.current.volume = 0.7;
-      enabledButtonAudio.current.currentTime = 0.4;
-      enabledButtonAudio.current
+      enabledButtonAudio
         .play()
         .catch((err) => console.warn("Enabled Button Audio play failed:", err));
       setIsSpinDisabled(false);
