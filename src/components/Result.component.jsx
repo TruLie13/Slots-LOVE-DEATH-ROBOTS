@@ -1,19 +1,19 @@
 // src/components/Result.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { Card, Typography } from "@mui/material";
+import { motion as Motion } from "framer-motion";
 
 const lossPrompts = [
   "you're so close",
-  "oof...",
-  "try again...",
+  "oof",
+  "try again",
   "keep going",
   "don't give up",
-  "something encouraging because you lost and I don't want you to feel bad",
 ];
 
 export default function Result({ stoppedCount, isWinner }) {
   const lastPromptRef = useRef("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("SO CLOSE");
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
@@ -49,9 +49,28 @@ export default function Result({ stoppedCount, isWinner }) {
       }}
     >
       {showMessage && (
-        <Typography sx={{ color: "grey", fontSize: "1.5rem" }}>
-          {message}
-        </Typography>
+        <Motion.div
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        >
+          <Typography
+            variant="h2"
+            component="h1"
+            sx={{
+              color: "lightgrey",
+              fontWeight: 700,
+              fontSize: { xs: "2.5rem", md: "4rem" },
+              textTransform: "uppercase",
+              textShadow: `
+                2px 0 4px rgba(255,0,0,0.8),
+               -2px 0 4px rgba(0,255,255,0.8)
+              `,
+            }}
+          >
+            {message}
+          </Typography>
+        </Motion.div>
       )}
     </Card>
   );
