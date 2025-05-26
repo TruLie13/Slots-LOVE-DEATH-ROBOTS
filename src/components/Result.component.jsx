@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Card, Typography } from "@mui/material";
 import { motion as Motion } from "framer-motion";
+// import promptSound from "../assets/sounds/prompt_drop_sound.mp3";
 
 const lossPrompts = [
   "you're so close",
@@ -16,6 +17,8 @@ export default function Result({ stoppedCount, isWinner }) {
   const [message, setMessage] = useState("SO CLOSE");
   const [showMessage, setShowMessage] = useState(false);
 
+  // const promptAudio = useRef(new Audio(promptSound));
+
   useEffect(() => {
     if (stoppedCount !== 3) {
       setShowMessage(false);
@@ -24,7 +27,7 @@ export default function Result({ stoppedCount, isWinner }) {
       // all reels stopped: pick and show
       let nextMsg;
       if (isWinner) {
-        nextMsg = "We Have a Winn-na";
+        nextMsg = "Winn-na!";
       } else {
         const choices = lossPrompts.filter((p) => p !== lastPromptRef.current);
         nextMsg = choices[Math.floor(Math.random() * choices.length)];
@@ -32,6 +35,12 @@ export default function Result({ stoppedCount, isWinner }) {
       }
       setMessage(nextMsg);
       setShowMessage(true);
+
+      // play the prompt drop sound
+      // promptAudio.current.currentTime = 0;
+      // promptAudio.current
+      //   .play()
+      //   .catch((err) => console.warn("Prompt audio play failed:", err));
     }
   }, [stoppedCount, isWinner]);
 
@@ -40,7 +49,7 @@ export default function Result({ stoppedCount, isWinner }) {
       elevation={0}
       sx={{
         minHeight: "8.5rem",
-        minWidth: "90%",
+        maxWidth: "90%",
         m: 2,
         textAlign: "center",
         boxShadow: "none",
